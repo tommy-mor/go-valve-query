@@ -15,7 +15,7 @@
 # vendor/
 main
 fiddle
-pod-babashka-go-sqlite3
+go-valve-query
 
 .clj-kondo/
 .nrepl-port
