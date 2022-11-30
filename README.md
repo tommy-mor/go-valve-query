@@ -1,20 +1,24 @@
-# pod-babashka-go-sqlite3
+# go-valve-query
 
-A [babashka pod](https://github.com/babashka/babashka.pods) for interacting with [sqlite3](https://www.sqlite.org/index.html).
+A [babashka pod](https://github.com/babashka/babashka.pods) for running [a2s](https://developer.valvesoftware.com/wiki/Server_queries) queries and [rcon](https://developer.valvesoftware.com/wiki/Source_RCON_Protocol) commands to valve source engine servers.
 
-Implemented using the Go [go-sqlite3](https://github.com/mattn/go-sqlite3) and [transit](https://github.com/russolsen/transit) libraries.
+Implemented using the Go [go-source-server-query](https://github.com/NewPage-Community/go-source-server-query) and [transit](https://github.com/russolsen/transit) libraries.
+
+This repository was adapted/forked from the [pod-babashka-go-sqlite3](https://github.com/babashka/pod-babashka-go-sqlite3) by @borkdude.
 
 ## Usage
 
-Load the pod and `pod.babashka.go-sqlite3` namespace:
+Load the pod and `tommy-mor.go-valve-query` namespace:
 
 ``` clojure
-(ns sqlite3-script
+(ns valve-script
   (:require [babashka.pods :as pods]))
 
-(pods/load-pod 'org.babashka/go-sqlite3 "0.1.0")
-(require '[pod.babashka.go-sqlite3 :as sqlite])
+(pods/load-pod "TODO update when I add to registry")
+(require '[tommy-mor.go-valve-query :as steam])
 ```
+
+TODO update these examples..
 
 The namespace exposes two functions: `execute!` and `query`. Both accept a path
 to the sqlite database and a query vector:
@@ -50,62 +54,16 @@ Passing any other kind of data apart from a string or a vector will throw.
 
 See [test/script.clj](test/script.clj) for an example test script.
 
-### HoneySQL
-
-[HoneySQL](https://github.com/seancorfield/honeysql) is a babashka-compatible
-library for turning Clojure data structures into SQL.
-
-``` clojure
-(ns honeysql-script
-  (:require [babashka.deps :as deps]
-            [babashka.pods :as pods]))
-
-;; Load HoneySQL from Clojars:
-(deps/add-deps '{:deps {honeysql/honeysql {:mvn/version "1.0.444"}}})
-
-(require '[honeysql.core :as sql]
-         '[honeysql.helpers :as helpers])
-
-(pods/load-pod 'org.babashka/go-sqlite3 "0.1.0")
-(require '[pod.babashka.go-sqlite3 :as sqlite])
-
-(sqlite/execute! "/tmp/foo.db" ["create table if not exists foo (col1 TEXT, col2 TEXT)"])
-
-(def insert
-  (-> (helpers/insert-into :foo)
-      (helpers/columns :col1 :col2)
-      (helpers/values
-       [["Foo" "Bar"]
-        ["Baz" "Quux"]])
-      sql/format))
-;; => ["INSERT INTO foo (col1, col2) VALUES (?, ?), (?, ?)" "Foo" "Bar" "Baz" "Quux"]
-
-(sqlite/execute! "/tmp/foo.db" insert)
-;; => {:rows-affected 2, :last-inserted-id 2}
-
-(def sqlmap {:select [:col1 :col2]
-             :from   [:foo]
-             :where  [:= :col1 "Foo"]})
-
-(def select (sql/format sqlmap))
-;; => ["SELECT col1, col2 FROM foo WHERE col1 = ?" "Foo"]
-
-(sqlite/query "/tmp/foo.db" select)
-;; => [{:col1 "Foo", :col2 "Bar"}]
-```
-
-See [test/honeysql.clj](test/honeysql.clj) for a HoneySQL example script.
-
 ## Build
 
 ### Requirements
 
 - [Go](https://golang.org/dl/) 1.15+ should be installed.
 - Clone this repo.
-- Run `go build -o pod-babashka-go-sqlite3 main.go` to compile the binary.
+- Run `go build` to compile the binary.
 
 ## License
 
-Copyright © 2020-2021 Michiel Borkent and Rahul De
+Copyright © 2020-2021 Michiel Borkent and Rahul De TODO? not sure what do to for this...
 
 License: [BSD 3-Clause](https://opensource.org/licenses/BSD-3-Clause)
