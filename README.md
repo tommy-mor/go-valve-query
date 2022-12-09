@@ -14,45 +14,25 @@ Load the pod and `tommy-mor.go-valve-query` namespace:
 (ns valve-script
   (:require [babashka.pods :as pods]))
 
-(pods/load-pod "TODO update when I add to registry")
+(pods/load-pod 'tommy-mor.go-valve-query "0.1.0")
 (require '[tommy-mor.go-valve-query :as steam])
 ```
 
-TODO update these examples..
-
-The namespace exposes two functions: `execute!` and `query`. Both accept a path
-to the sqlite database and a query vector:
+The namespace exposes four functions: `ping`, `info`, `players`, and `rcon`. The first argument is always the url of the server you want to query:
 
 ``` clojure
-(sqlite/execute! "/tmp/foo.db"
-  ["create table if not exists foo (the_text TEXT, the_int INTEGER, the_real REAL, the_blob BLOB)"])
+(steam/ping "mge.tf:27015")
+;;=> {:ms 81}
 
-;; This pod also supports storing blobs, so lets store a picture.
-(def png (java.nio.file.Files/readAllBytes (.toPath (io/file "resources/babashka.png"))))
+(steam/info "mge.tf:27015")
+;;=> {:game-id 440, :sourcetv-port 0, :max-players 24, :protocol 17, :game "Team Fortress", :folder "tf", :name "Team Fortress", :bots 0, :port 27015, :keywords "", :steam-id 85568392925064336, :id 440, :players 0, :environment 1, :server-type 1, :version "7708610", :sourcetv-name "", :vac 2, :map "mge_chillypunch_final4_fix2", :visibility 1}
 
-(sqlite/execute! "/tmp/foo.db"
-  ["insert into foo (the_text, the_int, the_real, the_blob) values (?,?,?,?)" "foo" 1 3.14 png])
-;;=> {:rows-affected 1, :last-inserted-id 1}
+(steam/players "mge.tf:27015")
+;;=>[{:index 0, :name "JJP", :score 16, :duration 2280.06689453125}]
 
-(def results (sqlite/query "/tmp/foo.db" ["select * from foo order by the_int asc"]))
-(count results) ;;=> 1
+(steam/rcon "mge.tf:27015" "<password>" "sm help")
+;;=> ["SourceMod Menu:" "Usage: sm <command> [arguments]" "    cmds             - List console commands" "    config           - Set core configuration options" "    credits          - Display credits listing" "    cvars            - View convars created by a plugin" "    exts             - Manage extensions" "    plugins          - Manage Plugins" "    prof             - Profiling" "    version          - Display version information"]
 
-(def row (first results))
-(keys row) ;;=> (:the_text :the_int :the_real :the_blob)
-(:the_text row) ;;=> "foo"
-
-;; Should be true:
-(= (count png) (count (:the_blob row)))
-```
-
-Additionally, unparameterised queries are supported if a string is passed
-```clojure
-(sqlite/query "/tmp/foo.db" "select * from foo")
-```
-
-Passing any other kind of data apart from a string or a vector will throw.
-
-See [test/script.clj](test/script.clj) for an example test script.
 
 ## Build
 
@@ -60,7 +40,7 @@ See [test/script.clj](test/script.clj) for an example test script.
 
 - [Go](https://golang.org/dl/) 1.15+ should be installed.
 - Clone this repo.
-- Run `go build` to compile the binary.
+- Run `go build -o go-valve-query` to compile the binary.
 
 ## License
 

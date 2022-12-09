@@ -22,3 +22,4 @@ go-valve-query
 .lsp/
 
 password.txt
+dist/
