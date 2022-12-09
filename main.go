@@ -71,6 +71,11 @@ func encodeResult(res *babashka.Message) (ExecResult, error) {
 	return nil, errors.New("woops")
 }
 
+
+
+type InfoResult = map[transit.Keyword]interface{}
+
+
 func processMessage(message *babashka.Message) {
 	switch message.Op {
 	case "describe":
@@ -82,10 +87,10 @@ func processMessage(message *babashka.Message) {
 						Name: "tommy-mor.go-valve-query",
 						Vars: []babashka.Var{
 							{
-								Name: "connect",
+								Name: "ping",
 							},
 							{
-								Name: "query",
+								Name: "info",
 							},
 						},
 					},
@@ -107,7 +112,41 @@ func processMessage(message *babashka.Message) {
 		defer conn.Close()
 
 		switch message.Var {
-		case "tommy-mor.go-valve-query/connect":
+		case "tommy-mor.go-valve-query/info":
+
+			info, err := conn.Info()
+
+			if err != nil {
+				babashka.WriteErrorResponse(message, err)
+				return
+			}
+
+			res := InfoResult{
+				transit.Keyword("protocol"):          info.Protocol,
+				transit.Keyword("name"):              info.Name,
+				transit.Keyword("map"):               info.Map,
+				transit.Keyword("folder"):            info.Folder,
+				transit.Keyword("game"):              info.Game,
+				transit.Keyword("id"):                info.ID,
+				transit.Keyword("players"):           info.Players,
+				transit.Keyword("max-players"):       info.MaxPlayers,
+				transit.Keyword("bots"):              info.Bots,
+				transit.Keyword("server-type"):       info.ServerType,
+				transit.Keyword("environment"):       info.Environment,
+				transit.Keyword("visibility"):        info.Visibility,
+				transit.Keyword("vac"):               info.VAC,
+				transit.Keyword("version"):           info.Version,
+				transit.Keyword("port"):              info.Port,
+				transit.Keyword("steam-id"):          info.SteamID,
+				transit.Keyword("sourcetv-port"):     info.SourceTVPort,
+				transit.Keyword("sourcetv-name"):     info.SourceTVName,
+				transit.Keyword("keywords"):          info.Keywords,
+				transit.Keyword("game-id"):           info.GameID,
+			}
+
+			respond(message, res)
+
+		case "tommy-mor.go-valve-query/ping":
 
 			duration, err := conn.Ping()
 

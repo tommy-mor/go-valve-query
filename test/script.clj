@@ -5,10 +5,13 @@
             [clojure.java.io :as io]
             [clojure.test :as t :refer [deftest is testing]]))
 
-(prn (pods/load-pod "./go-valve-query"))
-
+(pods/load-pod "./go-valve-query")
 (require '[tommy-mor.go-valve-query :as steam])
 
-(prn (steam/connect "mge.tf:27015" "query"))
+(prn (ns-publics 'tommy-mor.go-valve-query))
+
+#_(prn (steam/ping "elo2.sappho.io:27215" "query"))
+
+(prn (steam/info "elo2.sappho.io:27215" "query"))
 
 
