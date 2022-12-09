@@ -32,7 +32,7 @@ The namespace exposes four functions: `ping`, `info`, `players`, and `rcon`. The
 
 (steam/rcon "mge.tf:27015" "<password>" "sm help")
 ;;=> ["SourceMod Menu:" "Usage: sm <command> [arguments]" "    cmds             - List console commands" "    config           - Set core configuration options" "    credits          - Display credits listing" "    cvars            - View convars created by a plugin" "    exts             - Manage extensions" "    plugins          - Manage Plugins" "    prof             - Profiling" "    version          - Display version information"]
-
+```
 
 ## Build
 
@@ -43,7 +43,8 @@ The namespace exposes four functions: `ping`, `info`, `players`, and `rcon`. The
 - Run `go build -o go-valve-query` to compile the binary.
 
 ## License
+This is a fork/adaptation of https://github.com/babashka/pod-babashka-go-sqlite3, which had this license:
 
-Copyright © 2020-2021 Michiel Borkent and Rahul De TODO? not sure what do to for this...
+Copyright © 2020-2021 Michiel Borkent and Rahul De
 
 License: [BSD 3-Clause](https://opensource.org/licenses/BSD-3-Clause)
