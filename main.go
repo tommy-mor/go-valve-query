@@ -92,6 +92,9 @@ func processMessage(message *babashka.Message) {
 							{
 								Name: "info",
 							},
+							{
+								Name: "players",
+							},
 						},
 					},
 				},
@@ -142,6 +145,27 @@ func processMessage(message *babashka.Message) {
 				transit.Keyword("sourcetv-name"):     info.SourceTVName,
 				transit.Keyword("keywords"):          info.Keywords,
 				transit.Keyword("game-id"):           info.GameID,
+			}
+
+			respond(message, res)
+
+		case "tommy-mor.go-valve-query/players":
+
+			players, err := conn.PlayersInfo()
+
+			if err != nil {
+				babashka.WriteErrorResponse(message, err)
+				return
+			}
+
+			res := make([]InfoResult, len(players.Players))
+			for playerIdx, player := range players.Players {
+				res[playerIdx] = InfoResult{
+					transit.Keyword("index"): player.Index,
+					transit.Keyword("name"):  player.Name,
+					transit.Keyword("score"): player.Score,
+					transit.Keyword("duration"):  player.Duration,
+				}
 			}
 
 			respond(message, res)

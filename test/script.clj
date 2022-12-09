@@ -12,6 +12,7 @@
 
 #_(prn (steam/ping "elo2.sappho.io:27215" "query"))
 
-(prn (steam/info "elo2.sappho.io:27215" "query"))
+#_(prn (steam/info "elo2.sappho.io:27215" "query"))
+(prn (steam/players "elo2.sappho.io:27215" "query"))
 
 
