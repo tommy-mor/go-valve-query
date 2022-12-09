@@ -33,25 +33,31 @@ func listToSlice(l *list.List) []interface{} {
 	return slice
 }
 
-func parseQuery(args string) (string, string, []interface{}, error) {
+func parseQuery(args string) (string, []interface{}, error) {
 	reader := strings.NewReader(args)
 	decoder := transit.NewDecoder(reader)
 	value, err := decoder.Decode()
 	if err != nil {
-		return "", "", nil, err
+		return "", nil, err
 	}
 
 	argSlice := listToSlice(value.(*list.List))
 	addr := argSlice[0].(string)
+	rest := argSlice[1:]
+	return addr, rest, nil
 
-	switch queryArgs := argSlice[1].(type) {
-	case string:
-		return addr, queryArgs, make([]interface{}, 0), nil
-	case []interface{}:
-		return addr, queryArgs[0].(string), queryArgs[1:], nil
-	default:
-		return "", "", nil, errors.New("unexpected query type, expected a string or a vector")
-	}
+	//if len(argSlice) == 1 {
+	//addr := argSlice[0].(string)
+	//return addr, "", "", nil
+	//} else if len(argSlice) == 3 {
+	//addr := argSlice[0].(string)
+	//pw := argSlice[1].(string)
+	//cmd := argSlice[2].(string)
+	//return addr, pw, cmd, nil
+	//} else {
+	//return "", "", "", errors.New("invalid args")
+	//}
+		
 }
 
 func respond(message *babashka.Message, response interface{}) {
@@ -95,18 +101,28 @@ func processMessage(message *babashka.Message) {
 							{
 								Name: "players",
 							},
+							{
+								Name: "rcon",
+							},
 						},
 					},
 				},
 			})
 	case "invoke":
-		addr, _, _, err := parseQuery(message.Args)
+		addr, args, err := parseQuery(message.Args)
 		if err != nil {
 			babashka.WriteErrorResponse(message, err)
 			return
 		}
 
-		conn, err := steam.Connect(addr)
+		var options *steam.ConnectOptions = nil
+		if len(args) != 0 {
+			options = &steam.ConnectOptions{RCONPassword: args[0].(string)}
+		}  else {
+			options = &steam.ConnectOptions{}
+		}
+
+		conn, err := steam.Connect(addr, options)
 		if err != nil {
 			babashka.WriteErrorResponse(message, err)
 			return
@@ -184,6 +200,22 @@ func processMessage(message *babashka.Message) {
 			}
 
 			respond(message, res)
+
+		case "tommy-mor.go-valve-query/rcon":
+			if(len(args) != 2) {
+				babashka.WriteErrorResponse(message, errors.New("rcon requires 2 arguments"))
+				return
+			}
+
+			resp, err := conn.Send(args[1].(string))
+
+			if err != nil {
+				babashka.WriteErrorResponse(message, err)
+				return
+			}
+
+			respond(message, resp)
+
 
 		default:
 			babashka.WriteErrorResponse(message, fmt.Errorf("Unknown var %s", message.Var))

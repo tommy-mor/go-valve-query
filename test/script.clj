@@ -10,9 +10,16 @@
 
 (prn (ns-publics 'tommy-mor.go-valve-query))
 
-#_(prn (steam/ping "elo2.sappho.io:27215" "query"))
+(def url "mge.tf:27015")
 
-#_(prn (steam/info "elo2.sappho.io:27215" "query"))
-(prn (steam/players "elo2.sappho.io:27215" "query"))
+(prn (steam/ping url))
+
+(prn (steam/info url))
+(prn (steam/players url))
+
+(->> (steam/rcon url (clojure.string/trim (slurp "password.txt"))
+                 "sm")
+     clojure.string/split-lines
+     (map println))
 
 

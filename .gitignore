@@ -20,3 +20,5 @@ go-valve-query
 .clj-kondo/
 .nrepl-port
 .lsp/
+
+password.txt
