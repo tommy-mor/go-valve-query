@@ -43,8 +43,10 @@ The namespace exposes four functions: `ping`, `info`, `players`, and `rcon`. The
 - Run `go build -o go-valve-query` to compile the binary.
 
 ## License
-This is a fork/adaptation of https://github.com/babashka/pod-babashka-go-sqlite3, which had this license:
+This is a fork/adaptation of https://github.com/babashka/pod-babashka-go-sqlite3, which had the following license:
 
+```
 Copyright © 2020-2021 Michiel Borkent and Rahul De
 
 License: [BSD 3-Clause](https://opensource.org/licenses/BSD-3-Clause)
+```
